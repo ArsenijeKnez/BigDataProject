@@ -1,28 +1,21 @@
 const express = require("express");
-const SensorData = require("../models/SensorData");
-
 const router = express.Router();
+const DataLog = require("../models/DataLog");
 
-// POST - upis senzorskih podataka
 router.post("/", async (req, res) => {
   try {
-    const data = new SensorData(req.body);
-    await data.save();
-    res.status(201).json({ message: "Data saved successfully" });
+    const { deviceId, payload } = req.body;
+    const entry = new DataLog({ deviceId, payload });
+    await entry.save();
+    res.status(201).json({ message: "Data logged successfully" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 });
 
-// GET - preuzimanje poslednjih N podataka
-router.get("/", async (req, res) => {
-  try {
-    const limit = parseInt(req.query.limit) || 10;
-    const data = await SensorData.find().sort({ timestamp: -1 }).limit(limit);
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+router.get("/recent", async (req, res) => {
+  const logs = await DataLog.find().sort({ timestamp: -1 }).limit(20);
+  res.json(logs);
 });
 
 module.exports = router;

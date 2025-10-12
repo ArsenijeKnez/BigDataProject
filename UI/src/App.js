@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Home from "./views/Home";
 import DataSearch from "./views/DataSearch";
 import DataSubmit from "./views/DataSubmit";
-import logo from "./logo.svg";
 import "./App.css";
 
 function App() {
@@ -20,7 +19,6 @@ function App() {
     <Router>
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
           <nav>
             <Link to="/">Home</Link> | <Link to="/search">Data Search</Link> |{" "}
             <Link to="/submit">Data Submit</Link>
