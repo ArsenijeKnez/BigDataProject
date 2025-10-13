@@ -13,16 +13,32 @@ async function setupElasticSync() {
         await es.index({
           index: "iot-data",
           id: doc._id.toString(),
-          document: doc,
+          document: {
+            deviceId: doc.deviceId,
+            timestamp: doc.timestamp,
+            ...doc.payload,
+          },
         });
-        console.log("📡 Indexed to Elasticsearch:", doc.deviceId);
+        console.log("Auto-indexed to Elasticsearch:", doc.deviceId);
       }
     });
 
-    console.log("✅ Elasticsearch sync active");
+    console.log("Elasticsearch sync active");
   } catch (err) {
-    console.error("❌ Elasticsearch error:", err.message);
+    console.error("Elasticsearch error:", err.message);
   }
 }
 
-module.exports = { setupElasticSync };
+async function indexSensorData(data) {
+  try {
+    await es.index({
+      index: "iot-data",
+      document: data,
+    });
+    console.log("Manually indexed to Elasticsearch");
+  } catch (err) {
+    console.error("Elasticsearch indexing error:", err.message);
+  }
+}
+
+module.exports = { setupElasticSync, indexSensorData };

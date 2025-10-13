@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const DataLog = require("../models/DataLog");
 
-// Aggregation: Average temperature per device
+//Average temperature by device (Aggregation)
 router.get("/avg-temperature", async (req, res) => {
   try {
     const results = await DataLog.aggregate([
@@ -22,7 +22,7 @@ router.get("/avg-temperature", async (req, res) => {
   }
 });
 
-// Real MapReduce demo: average temperature
+//Average temperature by device (MapReduce)
 router.get("/mapreduce-temperature", async (req, res) => {
   try {
     const map = function () {
