@@ -27,37 +27,41 @@ const Home = () => {
 
   if (loading) {
     return (
-      <div className="text-center mt-5">
-        <h2>Učitavanje podataka...</h2>
+      <div className="container text-center py-5">
+        <div className="spinner-border text-primary mb-3" role="status"></div>
+        <h5>Učitavanje podataka...</h5>
       </div>
     );
   }
 
   if (!connected) {
     return (
-      <div className="text-center mt-5 text-danger">
-        <h2>Sistem je trenutno isključen</h2>
-        <p>Server nije dostupan.</p>
+      <div className="container text-center py-5">
+        <h3 className="text-danger mb-2">Sistem je trenutno isključen</h3>
+        <p className="text-muted">Server nije dostupan. Pokušajte kasnije.</p>
       </div>
     );
   }
 
   return (
-    <div className="container mt-4">
-      <h2 className="text-center mb-4">IoT Logger - Najnoviji podaci</h2>
-      <div className="row">
-        {logs.length === 0 ? (
-          <div className="text-center w-100">
-            <p>Nema novih podataka.</p>
-          </div>
-        ) : (
-          logs.map((log) => (
-            <div key={log._id} className="col-md-4 mb-3">
-              <div className="card shadow-sm">
+    <div className="container py-4">
+      <h2 className="text-center mb-4 fw-bold text-primary">
+        Najnoviji IoT podaci
+      </h2>
+
+      {logs.length === 0 ? (
+        <div className="alert alert-info text-center">Nema novih podataka.</div>
+      ) : (
+        <div className="row g-4">
+          {logs.map((log) => (
+            <div key={log._id} className="col-sm-6 col-md-4 col-lg-3">
+              <div className="card shadow-sm border-0 h-100">
                 <div className="card-body">
-                  <h5 className="card-title">{log.deviceId}</h5>
+                  <h6 className="card-title text-primary mb-2">
+                    {log.deviceId}
+                  </h6>
                   {log.payload && (
-                    <ul className="list-unstyled mb-2">
+                    <ul className="list-unstyled small mb-3">
                       {Object.entries(log.payload).map(([key, value]) => (
                         <li key={key}>
                           <strong>{key}:</strong> {String(value)}
@@ -71,9 +75,9 @@ const Home = () => {
                 </div>
               </div>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

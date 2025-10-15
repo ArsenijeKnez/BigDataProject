@@ -50,10 +50,10 @@ def fetch_devices():
             print(f"🔍 Found {len(devices)} devices.")
             return devices
         else:
-            print("⚠️ Could not fetch devices:", res.text)
+            print("Could not fetch devices:", res.text)
             return []
     except Exception as e:
-        print("❌ Error fetching devices:", e)
+        print("Error fetching devices:", e)
         return []
 
 if __name__ == "__main__":
