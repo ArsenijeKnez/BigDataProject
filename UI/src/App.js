@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import DeviceManager from "./components/DeviceManager";
 import DataSubmitter from "./components/DataSubmitter";
 import AnalyticsView from "./components/AnalyticsView";
+import DataVolumeChart from "./components/DataVolumeView";
 import Home from "./components/Home";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -37,6 +38,11 @@ function App() {
                   </Link>
                 </li>
                 <li className="nav-item">
+                  <Link className="nav-link" to="/data-volume">
+                    Data Volume
+                  </Link>
+                </li>
+                <li className="nav-item">
                   <Link className="nav-link" to="/analytics">
                     Analytics
                   </Link>
@@ -52,6 +58,7 @@ function App() {
             <Route path="/devices" element={<DeviceManager />} />
             <Route path="/data" element={<DataSubmitter />} />
             <Route path="/analytics" element={<AnalyticsView />} />
+            <Route path="/data-volume" element={<DataVolumeChart />} />
           </Routes>
         </main>
 

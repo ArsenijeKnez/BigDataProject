@@ -2,28 +2,67 @@ const express = require("express");
 const router = express.Router();
 const DataLog = require("../models/DataLog");
 const Device = require("../models/Device");
+const MiscellaneousData = require("../models/MiscellaneousData.js");
 const { indexSensorData } = require("../services/elasticSync");
 
-//Log new data from a device
+// Log new data
 router.post("/", async (req, res) => {
   try {
-    const { deviceId, payload } = req.body;
+    const data = req.body;
+    const receivedTimestamp = new Date();
+    const sourceAddress = req.ip || req.socket?.remoteAddress;
 
-    const device = await Device.findById(deviceId);
-    if (!device) {
-      return res.status(404).json({ error: "Device not found" });
+    const isValid =
+      typeof data === "object" &&
+      data !== null &&
+      "deviceId" in data &&
+      "payload" in data &&
+      "timestamp" in data;
+
+    const dataSize = Buffer.byteLength(JSON.stringify(data));
+
+    if (isValid) {
+      const { deviceId, payload, timestamp } = data;
+
+      const device = await Device.findById(deviceId);
+      if (!device) {
+        return res.status(404).json({ error: "Device not found" });
+      }
+
+      const newLog = new DataLog({
+        deviceId,
+        payload,
+        dataSize,
+        timestamp,
+        receivedTimestamp,
+      });
+
+      await newLog.save();
+
+      await indexSensorData({
+        deviceId,
+        timestamp,
+        ...payload,
+      });
+
+      return res
+        .status(201)
+        .json({ message: "Data logged successfully", log: newLog });
     }
 
-    const newLog = new DataLog({ deviceId, payload });
-    await newLog.save();
-
-    await indexSensorData({
-      deviceId,
-      timestamp: newLog.timestamp,
-      ...payload,
+    const miscLog = new MiscellaneousData({
+      receivedTimestamp,
+      sourceAddress,
+      payload: data,
+      dataSize,
     });
 
-    res.status(201).json({ message: "Data logged successfully", log: newLog });
+    await miscLog.save();
+
+    res.status(202).json({
+      message: "Data stored as miscellaneous (invalid format)",
+      miscLog,
+    });
   } catch (err) {
     console.error("Error logging data:", err);
     res.status(500).json({ message: "Server error", error: err.message });
