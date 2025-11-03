@@ -2,6 +2,31 @@ const express = require("express");
 const router = express.Router();
 const DataLog = require("../models/DataLog");
 
+router.get("/overview", async (req, res) => {
+  try {
+    const result = await DataLog.aggregate([
+      {
+        $group: {
+          _id: "$deviceId",
+          avgTemperature: { $avg: "$payload.temperature" },
+          minTemperature: { $min: "$payload.temperature" },
+          maxTemperature: { $max: "$payload.temperature" },
+          avgHumidity: { $avg: "$payload.humidity" },
+          totalSizeKB: { $sum: { $divide: ["$payload.dataSize", 1024] } },
+          count: { $sum: 1 },
+          lastActive: { $max: "$receivedTimestamp" },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    res.json(result);
+  } catch (err) {
+    console.error("Analytics error:", err);
+    res.status(500).json({ error: "Failed to calculate analytics" });
+  }
+});
+
 //Average temperature by device
 router.get("/avg-temperature", async (req, res) => {
   try {

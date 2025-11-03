@@ -53,29 +53,50 @@ const Home = () => {
         <div className="alert alert-info text-center">Nema novih podataka.</div>
       ) : (
         <div className="row g-4">
-          {logs.map((log) => (
-            <div key={log._id} className="col-sm-6 col-md-4 col-lg-3">
-              <div className="card shadow-sm border-0 h-100">
-                <div className="card-body">
-                  <h6 className="card-title text-primary mb-2">
-                    {log.deviceId}
-                  </h6>
-                  {log.payload && (
-                    <ul className="list-unstyled small mb-3">
-                      {Object.entries(log.payload).map(([key, value]) => (
-                        <li key={key}>
-                          <strong>{key}:</strong> {String(value)}
-                        </li>
-                      ))}
-                    </ul>
+          {logs.map((log) => {
+            const payload = log.payload || {};
+            const imageUrl =
+              payload.imageUrl && payload.imageUrl.startsWith("http")
+                ? payload.imageUrl
+                : payload.imageUrl
+                ? `http://localhost:4000${payload.imageUrl}`
+                : null;
+
+            return (
+              <div key={log._id} className="col-sm-6 col-md-4 col-lg-3">
+                <div className="card shadow-sm border-0 h-100">
+                  {imageUrl && (
+                    <img
+                      src={imageUrl}
+                      alt="Device capture"
+                      className="card-img-top"
+                      style={{ objectFit: "cover", height: "200px" }}
+                    />
                   )}
-                  <small className="text-muted">
-                    {new Date(log.timestamp).toLocaleString()}
-                  </small>
+                  <div className="card-body">
+                    <h6 className="card-title text-primary mb-2">
+                      {log.deviceId}
+                    </h6>
+
+                    {/* Display non-image payload fields */}
+                    <ul className="list-unstyled small mb-3">
+                      {Object.entries(payload)
+                        .filter(([key]) => key !== "imageUrl")
+                        .map(([key, value]) => (
+                          <li key={key}>
+                            <strong>{key}:</strong> {String(value)}
+                          </li>
+                        ))}
+                    </ul>
+
+                    <small className="text-muted d-block mt-auto">
+                      {new Date(log.timestamp).toLocaleString()}
+                    </small>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

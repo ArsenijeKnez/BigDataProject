@@ -5,6 +5,7 @@ const dataRoutes = require("./routes/dataRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 const { setupElasticSync } = require("./services/elasticSync");
 const deviceRoutes = require("./routes/deviceRoutes");
+const path = require("path");
 
 const app = express();
 app.use(express.json());
@@ -18,6 +19,7 @@ mongoose
   .then(() => {
     console.log("Connected to MongoDB");
 
+    app.use("/uploads", express.static(path.join(__dirname, "uploads")));
     app.use("/api/data", dataRoutes);
     app.use("/api/analytics", analyticsRoutes);
     app.use("/api/devices", deviceRoutes);
