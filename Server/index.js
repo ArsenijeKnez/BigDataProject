@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 const uri =
-  "mongodb+srv://Admin:Admin@cluster0.tiohfd7.mongodb.net/Cluster0?retryWrites=true&w=majority&appName=Cluster0";
+  "mongodb+srv://<username>:<password>@cluster0.mongodb.net/iot_database?retryWrites=true&w=majority";
 
 mongoose
   .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
