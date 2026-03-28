@@ -23,7 +23,7 @@ The **IoT Logger** project consists of four main components:
 
 ---
 
-## 🧩 Architecture Diagram
+## Architecture Diagram
 
 ```
 +------------------+          +----------------+          +-------------------+
